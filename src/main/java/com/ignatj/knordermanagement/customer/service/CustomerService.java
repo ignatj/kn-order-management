@@ -1,11 +1,14 @@
 package com.ignatj.knordermanagement.customer.service;
 
 import com.ignatj.knordermanagement.customer.dto.CreateCustomerRequest;
+import com.ignatj.knordermanagement.customer.dto.CreateCustomerResponse;
+import com.ignatj.knordermanagement.customer.dto.CustomerResponse;
 import com.ignatj.knordermanagement.customer.model.Customer;
 import com.ignatj.knordermanagement.customer.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -18,13 +21,15 @@ public class CustomerService {
         this.customerMapper = customerMapper;
     }
 
-    public List<Customer> getCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerResponse> getCustomers() {
+        return customerRepository.findAll().stream()
+                .map(customerMapper::toCustomerResponse)
+                .collect(Collectors.toList());
     }
 
-    public Customer addCustomer(CreateCustomerRequest request) {
+    public CreateCustomerResponse addCustomer(CreateCustomerRequest request) {
         Customer customer = customerMapper.toEntity(request);
         customerRepository.save(customer);
-        return customer;
+        return customerMapper.toCreateCustomerResponse(customer);
     }
 }

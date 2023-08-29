@@ -1,7 +1,8 @@
 package com.ignatj.knordermanagement.customer.controller;
 
 import com.ignatj.knordermanagement.customer.dto.CreateCustomerRequest;
-import com.ignatj.knordermanagement.customer.model.Customer;
+import com.ignatj.knordermanagement.customer.dto.CreateCustomerResponse;
+import com.ignatj.knordermanagement.customer.dto.CustomerResponse;
 import com.ignatj.knordermanagement.customer.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,13 +22,13 @@ public class CustomerController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Customer> getCustomers() {
+    public List<CustomerResponse> getCustomers() {
         return customerService.getCustomers();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Customer createCustomer(@Valid @RequestBody CreateCustomerRequest request) {
+    public CreateCustomerResponse createCustomer(@Valid @RequestBody CreateCustomerRequest request) {
         return customerService.addCustomer(request);
     }
 }
