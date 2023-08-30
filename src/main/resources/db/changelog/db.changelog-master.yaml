@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/create-customer-table.yaml
+  - include:
+      file: db/changelog/changeset/create-order-table.yaml
+  - include:
+      file: db/changelog/changeset/create-orderLine-table.yaml
+  - include:
+      file: db/changelog/changeset/create-product-table.yaml
+  - include:
+      file: db/changelog/changeset/create-foreign_key-constraints.yaml
+  - include:
+      file: db/changelog/changeset/sequence-generators.yaml

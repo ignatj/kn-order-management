@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-order_lines-table
+      author: IgnatJasevits
+      changes:
+        - createTable:
+            tableName: order_lines
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+

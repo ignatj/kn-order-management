@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-products-table
+      author: IgnatJasevits
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: sku_code
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: Unique skuCode constraint
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: unit_price
+                  type: NUMERIC
+                  constraints:
+                    nullable: false

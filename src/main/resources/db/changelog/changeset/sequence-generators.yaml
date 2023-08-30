@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-sequence-gen-customers
+      author: IgnatJasevits
+      changes:
+        - createSequence:
+            sequenceName: customers_seq
+            startValue: 1
+            incrementBy: 50
+            minValue: 1
+            maxValue: 9223372036854775807
+            cacheSize: 1
+  - changeSet:
+      id: create-sequence-gen-orders
+      author: IgnatJasevits
+      changes:
+        - createSequence:
+            sequenceName: orders_seq
+            startValue: 1
+            incrementBy: 50
+            minValue: 1
+            maxValue: 9223372036854775807
+            cacheSize: 1
+  - changeSet:
+      id: create-sequence-gen-order_lines
+      author: IgnatJasevits
+      changes:
+        - createSequence:
+            sequenceName: order_lines_seq
+            startValue: 1
+            incrementBy: 50
+            minValue: 1
+            maxValue: 9223372036854775807
+            cacheSize: 1
+  - changeSet:
+      id: create-sequence-gen-products
+      author: IgnatJasevits
+      changes:
+        - createSequence:
+            sequenceName: products_seq
+            startValue: 1
+            incrementBy: 50
+            minValue: 1
+            maxValue: 9223372036854775807
+            cacheSize: 1
