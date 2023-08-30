@@ -2,6 +2,7 @@ package com.ignatj.knordermanagement.order.service;
 
 import com.ignatj.knordermanagement.customer.model.Customer;
 import com.ignatj.knordermanagement.customer.repository.CustomerRepository;
+import com.ignatj.knordermanagement.order.dto.ChangeProductQuantityRequest;
 import com.ignatj.knordermanagement.order.dto.CreateOrderRequest;
 import com.ignatj.knordermanagement.order.dto.CreateOrderResponse;
 import com.ignatj.knordermanagement.order.dto.OrderResponse;
@@ -13,6 +14,9 @@ import com.ignatj.knordermanagement.product.model.Product;
 import com.ignatj.knordermanagement.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,5 +60,26 @@ public class OrderService {
         }
         orderRepository.save(order);
         return orderMapper.toCreateOrderResponse(order);
+    }
+
+    public List<OrderResponse> getOrdersByDate(String date) {
+        LocalDate parsedDate = LocalDate.parse(date); // Todo: Catch and throw custom Exception
+        LocalDateTime startOfDay = parsedDate.atStartOfDay();
+        LocalDateTime endOfDay = parsedDate.atTime(LocalTime.MAX);
+
+        return orderRepository.findBySubmissionTimeBetween(startOfDay, endOfDay).stream()
+                .map(orderMapper::toOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    public void changeProductQuantityInOrderLine(Long orderId, ChangeProductQuantityRequest request) {
+        OrderLine orderLine = orderLineRepository.findByOrder_IdAndProduct_Id(orderId, request.getProductId()).get(); // Todo: Throw custom Exception
+
+        if (request.getNewQuantity() == 0) {
+            orderRepository.delete(orderLine.getOrder());
+            return;
+        }
+        orderLine.setQuantity(request.getNewQuantity());
+        orderLineRepository.save(orderLine);
     }
 }

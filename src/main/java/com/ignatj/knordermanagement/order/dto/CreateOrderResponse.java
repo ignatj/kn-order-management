@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class CreateOrderResponse {
 
-    private long orderId;
+    private Long orderId;
 }
