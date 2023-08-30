@@ -1,5 +1,6 @@
 package com.ignatj.knordermanagement.order.service;
 
+import com.ignatj.knordermanagement.common.exception.ApiException;
 import com.ignatj.knordermanagement.customer.model.Customer;
 import com.ignatj.knordermanagement.customer.repository.CustomerRepository;
 import com.ignatj.knordermanagement.order.dto.ChangeProductQuantityRequest;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,13 +48,16 @@ public class OrderService {
     }
 
     public CreateOrderResponse addOrder(CreateOrderRequest request) {
-        Customer customer = customerRepository.findById(request.getCustomerId()).get(); // Todo: Throw custom Exception
+        Customer customer = customerRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new ApiException("Customer with id {" + request.getCustomerId() + "} does not exist"));
 
         Order order = new Order();
         customer.addOrder(order);
 
         for (CreateOrderRequest.OrderLineRequest orderLineRequest : request.getOrderLines()) {
-            Product product = productRepository.findById(orderLineRequest.getProductId()).get(); // Todo: Throw custom Exception
+            Product product = productRepository.findById(orderLineRequest.getProductId())
+                    .orElseThrow(() ->
+                            new ApiException("Product with id {" + orderLineRequest.getProductId() + "} does not exist"));
 
             OrderLine orderLine = new OrderLine();
             orderLine.setQuantity(orderLineRequest.getQuantity());
@@ -65,18 +70,23 @@ public class OrderService {
     }
 
     public List<OrderResponse> getOrdersByDate(String date) {
-        LocalDate parsedDate = LocalDate.parse(date); // Todo: Catch and throw custom Exception
-        LocalDateTime startOfDay = parsedDate.atStartOfDay();
-        LocalDateTime endOfDay = parsedDate.atTime(LocalTime.MAX);
+        try {
+            LocalDate parsedDate = LocalDate.parse(date);
+            LocalDateTime startOfDay = parsedDate.atStartOfDay();
+            LocalDateTime endOfDay = parsedDate.atTime(LocalTime.MAX);
 
-        return orderRepository.findBySubmissionTimeBetween(startOfDay, endOfDay).stream()
-                .map(orderMapper::toOrderResponse)
-                .collect(Collectors.toList());
+            return orderRepository.findBySubmissionTimeBetween(startOfDay, endOfDay).stream()
+                    .map(orderMapper::toOrderResponse)
+                    .collect(Collectors.toList());
+        } catch (DateTimeParseException ex) {
+            throw new ApiException("Invalid date format: " + date);
+        }
     }
 
     public void changeProductQuantityInOrderLine(Long orderId, ChangeProductQuantityRequest request) {
-        OrderLine orderLine = orderLineRepository.findByOrder_IdAndProduct_Id(orderId, request.getProductId()).get(); // Todo: Throw custom Exception
-
+        OrderLine orderLine = orderLineRepository.findByOrder_IdAndProduct_Id(orderId, request.getProductId())
+                .orElseThrow(() -> new ApiException("No order line with those attributes exist: orderId{"
+                        + orderId + "} , product{" + request.getProductId() + "}"));
         if (request.getNewQuantity() == 0) {
             orderRepository.delete(orderLine.getOrder());
             return;
