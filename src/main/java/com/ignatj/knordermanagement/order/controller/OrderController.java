@@ -45,4 +45,28 @@ public class OrderController {
                                                  @Valid @RequestBody ChangeProductQuantityRequest request) {
         orderService.changeProductQuantityInOrderLine(orderId, request);
     }
+
+    @GetMapping("/search-by-customer-jpql/{customerId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrderResponse> getOrdersByCustomerJPQL(@PathVariable Long customerId) {
+        return orderService.getOrdersByCustomerJPQL(customerId);
+    }
+
+    @GetMapping("/search-by-product-jpql/{productId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrderResponse> getOrdersByProductJPQL(@PathVariable Long productId) {
+        return orderService.getOrdersByProductJPQL(productId);
+    }
+
+    @GetMapping("/search-by-customer-specification/{customerId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrderResponse> getOrdersByCustomerSpecification(@PathVariable Long customerId) {
+        return orderService.getOrdersByCustomerSpecification(customerId);
+    }
+
+    @GetMapping("/search-by-product-specification/{productId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrderResponse> getOrdersByProductSpecification(@PathVariable Long productId) {
+        return orderService.getOrdersByProductSpecification(productId);
+    }
 }

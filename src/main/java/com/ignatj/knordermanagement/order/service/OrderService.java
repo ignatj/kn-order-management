@@ -10,8 +10,10 @@ import com.ignatj.knordermanagement.order.model.Order;
 import com.ignatj.knordermanagement.order.model.OrderLine;
 import com.ignatj.knordermanagement.order.repository.OrderLineRepository;
 import com.ignatj.knordermanagement.order.repository.OrderRepository;
+import com.ignatj.knordermanagement.order.specification.OrderSpecifications;
 import com.ignatj.knordermanagement.product.model.Product;
 import com.ignatj.knordermanagement.product.repository.ProductRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -81,5 +83,31 @@ public class OrderService {
         }
         orderLine.setQuantity(request.getNewQuantity());
         orderLineRepository.save(orderLine);
+    }
+
+    public List<OrderResponse> getOrdersByCustomerJPQL(Long customerId) {
+        return orderRepository.findByCustomerIdJPQL(customerId).stream()
+                .map(orderMapper::toOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderResponse> getOrdersByProductJPQL(Long productId) {
+        return orderRepository.findByProductIdJPQL(productId).stream()
+                .map(orderMapper::toOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderResponse> getOrdersByCustomerSpecification(Long customerId) {
+        Specification<Order> orderSpecification = OrderSpecifications.hasCustomerId(customerId);
+        return orderRepository.findAll(orderSpecification).stream()
+                .map(orderMapper::toOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderResponse> getOrdersByProductSpecification(Long productId) {
+        Specification<Order> orderSpecification = OrderSpecifications.hasProductId(productId);
+        return orderRepository.findAll(orderSpecification).stream()
+                .map(orderMapper::toOrderResponse)
+                .collect(Collectors.toList());
     }
 }
